@@ -1,20 +1,15 @@
-\documentclass{article}
-\usepackage{graphicx} % Required for inserting images
-
-
-\title{6.8300 Final Project}
-\author{Kristine Lu, Kshitij Sodani}
-\date{May 2025}
-
-\usepackage[hybrid]{markdown}
-\begin{document}
-\begin{markdown}
 # Neural Spline Flows in Transformer Autoregressive Models
 
 By: Kristine Lu, Kshitij Sodani
 
 ## Introduction
 Normalizing flows are a technique used in deep generative models that learn **invertible** mappings between a data distribution and a known reference distribution (typically a Gaussian). Recent state of the art image generative models center around diffusion, and research in the direction of normalizing flows has been left behind. However, when built on new architecture utilizing masked autoregressive vision transformer models, normalizing flows have shown to indeed be powerful image generative models [1]. One of the important choices when designing a normalizing flow is the choice of flow function. Our project tests the effectiveness of replacing the simple affine transformation of recent normalizing flow models with monotonic rational-quadratic spline transforms, essentially combining the flexibility of neural spline flows with the recent autoregressive masked ViT architecture to improve the ability of the model to capture complex transformations with fewer flow blocks.
+
+<div style="text-align: center; width: 75%; margin: 0 auto;">
+  <img src="images/nflows.jpeg" alt="Normalizing Flows use invertible functions to map image distributions to normal distributions and vice versa">
+  <p><em>Normalizing Flows use invertible functions to map image distributions to normal distributions.</em></p>
+</div>
+
 
 ## Background and Related Works
 ### Normalizing Flows
@@ -25,11 +20,6 @@ For example, in a VAE, we have an "encoder" which learns a latent space represen
 
 That's where normalizing flows come in. Normalizing flows similarly learn to map a data distribution to a known distribution through a series of transformations, but they don't suffer from the non-exact posteriors of VAEs. The key idea here is invertibility: Invertibility allows us to easily compute the inverse of the transformations to generate images from samples in the latent space, without having to approximate the posterior distribution of latent variables by training a new network. Why is this useful? It avoids the looseness of ELBOs, is more stable and often converges faster, and can sample in a single pass through $f_\theta$ on a Gaussian, without the need for reweighting and iterative solvers.
 
-
-<div style="text-align: center; width: 75%; margin: 0 auto;">
-  <img src="images/nflows.jpeg" alt="Normalizing Flows use invertible functions to map image distributions to normal distributions and vice versa">
-  <p><em>Normalizing Flows use invertible functions to map image distributions to normal distributions and vice versa</em></p>
-</div>
 
 
 But how exactly do we pick a framework for the flow function, so that our mapping from distribution $a$ to distribution $b$ is perfectly invertible, and the inverse easy to compute?
@@ -84,10 +74,17 @@ We turn to a more expressive and robust transformation, the rational-quadratic s
 
 ### Rational Quadratic Functions and Splines
 A rational quadratic is a fraction where both the numerator and denominator are different quadratic equations.
-Parametrization and Evaluation of a Rational Quadratic Spline.
+
+#### Parametrization and Evaluation of a Rational Quadratic Spline.
 We will define a spline with the domain as the [-B, B] range.
 
 Intuitively, it can be visualized as K quadratic functions over disjoint ranges put next to each other in the xy plane. The resulting combination function should be continuous and strictly monotone. It should also be differentiable everywhere for backpropagation to work. The function being monotonous would enable us to invert the function which is a required property for transformation which enables a normalizing flow architecture to function.
+
+
+<div style="text-align: center; width: 75%; margin: 0 auto;">
+  <img src="images/spline_.png" alt="Spline visualization">
+  <p><em>Here we've restricted the spline to the interval [–4, 4] (so B = 4) and used K = 3 bins, with knots at x = [–4, –1, 2, 4], corresponding y‐values [–4, –1, 1, 4] and derivative values [1, 0.5, 2, 1] at those knots</em></p>
+</div>
 
 Formally, for a Spline comprising of $K$ rational quadratic functions, the boundaries are set as $K+1$ coordinates $(x_k, y_k)$ for $k$ from $0$ to $K$ known as knots. Here $x_i$ and $y_i$ are both monotonic sequences with $x_0 = y_0 = 0$ and $x_K = y_K = B$. 
 
@@ -98,13 +95,10 @@ We set the boundary derivatives at $x_0$ and $x_K$ to be $1$ to make it like a l
 Now, it turns out we can always construct rational quadratic functions of $K$ such that the derivative constraints are satisfied and the resulting spline is monotonic, differentiable and continuous everywhere. On the other hand, it is not possible to match arbitrary values and
 derivatives of a function at two boundary knots with a quadratic polynomial or a monotonic segment of a cubic polynomial.
 
-Define $s_k = \frac{y_{k+1} - y_k}{x_{k+1} - x_k}$
-
-and $\xi(x) = \frac{x - x_{k}}{x_{k+1} - x_{k}},$
+Define $s_k = \frac{y_{k+1} - y_k}{x_{k+1} - x_k}$ and $\xi(x) = \frac{x - x_{k}}{x_{k+1} - x_{k}},$
 
 The expression for $\frac{\alpha^{(k)}(\xi)}{\beta^{(k)}(\xi)}$ in the $k^\text{th}$ bin can be written
-$$y^{(k)} + \frac{(y^{(k+1)} - y^{(k)}) \left[ s^{(k)} \xi^2 + \delta^{(k)} \xi (1 - \xi) \right]}{s^{(k)} + \left[ \delta^{(k+1)} + \delta^{(k)} - 2s^{(k)} \right] \xi (1 - \xi)}.
-\ \tag{4}$$
+$$y^{(k)} + \frac{(y^{(k+1)} - y^{(k)}) \left[ s^{(k)} \xi^2 + \delta^{(k)} \xi (1 - \xi) \right]}{s^{(k)} + \left[ \delta^{(k+1)} + \delta^{(k)} - 2s^{(k)} \right] \xi (1 - \xi)}.$$
 
 Using the quotient rule, we get an expression for the derivative as follows:
 
@@ -114,7 +108,7 @@ Using the quotient rule, we get an expression for the derivative as follows:
 
 
 
-Claim: This composition of rational quadratics is invertible, monotone and continuous.
+#### Claim: This composition of rational quadratics is invertible, monotone and continuous.
 
 It is easy to see that the derivative is always more than zero because of the squared expressions and the fact that $\xi$ is between $0$ and $1$, atleast one of $\xi$ and $1-\xi$ is positive and $s_k$ and $\sigma_k$ are all non-negative. Hence the function is monotone and hence invertible. Substituting $\xi = 0$ and $\xi = 1$, we also get the derivatives at the boundaries. are $\sigma_k$ and $\sigma_{k+1}$ as required.
 
@@ -131,23 +125,15 @@ It turns out the co-domain of this construction is also $[-B,B]$ so we don't nee
 
 Since the rational quadratic function acts independently of all the values, the log of the Jacobian matrix can be just computed by taking the sum of the logs of the derivatives of each of the transformed $x$ values. So we can just sum up all the derivatives individually using the formulae mentioned above.
 
-Clearly, the spline is much more expressive than an affine transformation as it is can be much closer to random functions we might want to model. This can also significantly reduce the number of layers needed in the normalizing flow while keeping same quality or drastically increase quality if the number of layers is unchanged.
+Clearly, the spline is much more expressive than an affine transformation as it can be much closer to random functions we might want to model. This can also significantly reduce the number of blocks needed in the normalizing flow while keeping same quality or drastically increase quality if the number of blocks is unchanged.
+
+#### Inverting a rational quadratic function:
+
+This reduces to solving a quadratic equation in $\xi$ if y is constant. There are 2 possible solutions but with our construction only of them lies in the functions bin(lower bin boundary to the upper bin boundary). This is true as the spline is strictly monotone so it cannot have the same value at 2 places.
 
 
-<div style="text-align: center; width: 75%; margin: 0 auto;">
-  <img src="images/spline_.png" alt="Spline visualization">
-  <p><em>Here we've restricted the spline to the interval [–4, 4] (so B = 4) and used K = 3 bins, with knots at x = [–4, –1, 2, 4], corresponding y‐values [–4, –1, 1, 4] and derivative values [1, 0.5, 2, 1] at those knots</em></p>
-</div>
+#### Implementation Details as per the Neural Spline Flows Paper:
 
-
-Inverting a rational quadratic function:
-\begin{figure}
-    \centering
-    \includegraphics[width=0.25\linewidth]{image.png}
-\end{figure}
-This reduces to solving a quadratic equation in \xi if y is constant. There are 2 possible solutions but with our construction only of them lies in the functions bin(lower bin boundary to the upper bin boundary). This is true as the spline is strictly monotone so it cannot have the same value at 2 places.
-\section{Using the spline over an affine transformation after each layer}
-\textbf{Implementation} Details as per the Neural Spline Flows Paper:
 The monotonic rational-quadratic coupling transform is implemented in practice as follows:
 
 1. A neural network (NN) receives input $\mathbf{x}_{1:d-1}$ and produces an unconstrained parameter vector $\boldsymbol{\theta}_i$ of size $3K - 1$ for each $i = d, \ldots, D$.
@@ -258,6 +244,3 @@ are there any other non-spline expressive invertible transformations?
 [1] https://arxiv.org/pdf/2412.06329
 
 [2] https://arxiv.org/pdf/1906.04032
-
-\end{markdown}
-\end{document}
