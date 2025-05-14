@@ -292,6 +292,7 @@ We were heavily limited by compute, with very little access to GPUs. Thus, we we
 
 ## References
 
-[1] https://arxiv.org/pdf/2412.06329
+[1]: Conor Durkan, Artur Bekasov, Iain Murray, and George Papamakarios. *Neural Spline Flows*. Advances in Neural Information Processing Systems, 2019. [arXiv:1906.04032](https://arxiv.org/abs/1906.04032)
 
-[2] https://arxiv.org/pdf/1906.04032
+[2]: Shuangfei Zhai, Ruixiang Zhang, Preetum Nakkiran, et al. *Normalizing Flows are Capable Generative Models*. arXiv preprint, 2024. [arXiv:2412.06329](https://arxiv.org/abs/2412.06329)
+
