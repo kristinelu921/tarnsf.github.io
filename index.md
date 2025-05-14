@@ -1,3 +1,8 @@
+---
+layout: page
+title: "Neural Spline Flows in Transformer Autoregressive Models"
+---
+
 # Neural Spline Flows in Transformer Autoregressive Models
 
 By: Kristine Lu, Kshitij Sodani
