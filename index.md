@@ -32,7 +32,15 @@ Normalizing flows are a technique used in deep generative models that learn **in
 
 Many generative models in the context of image generation learn to map a data distribution to a simpler latent space representation, and then use samples drawn from the latent space along with a learnt mapping to bring images from the latent space back to the data distribution. 
 
-For example, in a VAE, we have an "encoder" which learns a latent space representation of the data distribution, and then runs a new sample drawn from the latent space through a "decoder" to generate an image from the data distribution. The generator of a VAE maximizes the log likelihood $\mathbb{E}\_{x \sim p\_{data}}\log p\_\theta(x)$ of a VAE, with $p\_\theta(x) = \int\_z p\_\theta(x|z) p(z) dz$. However, the density $p(z)$ is intractable, so VAE's use a network to approximate the true posterior used to minimize ELBO losses.
+For example, in a VAE, we have an "encoder" which learns a latent space representation of the data distribution, and then runs a new sample drawn from the latent space through a "decoder" to generate an image from the data distribution. The generator of a VAE maximizes the log likelihood 
+
+$\mathbb{E}_{x \sim p_{data}}\log p_\theta(x)$
+
+ of a VAE, with 
+ 
+ $p_\theta(x) = \int_z p_\theta(x \mid z) p(z) dz$
+ 
+ . However, the density $p(z)$ is intractable, so VAE's use a network to approximate the true posterior used to minimize ELBO losses.
 
 That's where normalizing flows come in. Normalizing flows similarly learn to map a data distribution to a known distribution through a series of transformations, but they don't suffer from the non-exact posteriors of VAEs. The key idea here is invertibility: Invertibility allows us to easily compute the inverse of the transformations to generate images from samples in the latent space, without having to approximate the posterior distribution of latent variables by training a new network. Why is this useful? It avoids the looseness of ELBOs, is more stable and often converges faster, and can sample in a single pass through $f_\theta$ on a Gaussian, without the need for reweighting and iterative solvers.
 
@@ -234,10 +242,6 @@ We calculated the logdet loss, total loss, and Gaussian prior loss over 100 epoc
 
 Our results showed that the affine functions were able to learn more due to a higher logdet loss, while the RQS model was able to learn a more compressed Gaussian distribution. This doesn't directlty translsate to the affine transformation being more expressive than the RQS model, because the logdet loss is not the only metric we care about. We also care about the quality of the generated images.
 
-2. The FID score, which is a measure of the distance between two distributions, in this case, the distribution of the image patches and the distribution of the Gaussian latent space.
-
-Some of our generated digits looked as follows:
-
 <div style="text-align: center; width: 75%; margin: 0 auto;">
   <img src="images/digits.png" alt="Generated MNIST digits">
   <p><em>Selected digits (conditioned from 0-9) generated from our 8-bin RQS run after 100 epochs</em></p>
@@ -267,11 +271,7 @@ Furthermore, because rational quadratic spline transforms are nonlinear, we are 
 
 We also performed analysis on the number of bins needed. Essentially, the larger the number of bins, the more robust our model is to variance in pixels at all patches. Choosing K as a small constant like 4 or 8 is good enough to give good results. We obviously cannot choose K very high (like 100) as that would lead to a huge constant factor.  Increasing the number of bins a little bit might be useful in more complex datasets like Imagenet. We haven't tested yet on more complex datasets due to compute bottlenecks.
 
-
-
-## Discussion/Conclusion
-
-
+We conclude that our model is able to learn a representation and generate images well, with a runtime that is only a constant factor slower than an affine transformation. We conjecture that our model is more robust than an affine transformation, since each piecewise function allows more specificity given a more varied input distribution. 
 
 #### Limitations:
 
@@ -296,3 +296,4 @@ We were heavily limited by compute, with very little access to GPUs. Thus, we we
 [1]: Conor Durkan, Artur Bekasov, Iain Murray, and George Papamakarios. *Neural Spline Flows*. Advances in Neural Information Processing Systems, 2019. [arXiv:1906.04032](https://arxiv.org/abs/1906.04032)
 
 [2]: Shuangfei Zhai, Ruixiang Zhang, Preetum Nakkiran, et al. *Normalizing Flows are Capable Generative Models*. arXiv preprint, 2024. [arXiv:2412.06329](https://arxiv.org/abs/2412.06329)
+
