@@ -293,3 +293,4 @@ We were heavily limited by compute, with very little access to GPUs. Thus, we we
 
 [4]: Delbourgo, R., & Gregory, J. A. (1982). Rational quadratic spline interpolation to monotonic data. Maths Technical Papers (Brunel University), July 1982, 1–18. Retrieved from http://bura.brunel.ac.uk/handle/2438/2285 
 
+[5]: Kobyzev, I., Prince, S. J. D., & Brubaker, M. A. (2020). Normalizing Flows: An introduction and review of current methods. IEEE Transactions on Pattern Analysis and Machine Intelligence, 1–16. https://doi.org/10.1109/TPAMI.2020.2992934
