@@ -32,15 +32,7 @@ Normalizing flows are a technique used in deep generative models that learn **in
 
 Many generative models in the context of image generation learn to map a data distribution to a simpler latent space representation, and then use samples drawn from the latent space along with a learnt mapping to bring images from the latent space back to the data distribution. 
 
-For example, in a VAE, we have an "encoder" which learns a latent space representation of the data distribution, and then runs a new sample drawn from the latent space through a "decoder" to generate an image from the data distribution. The generator of a VAE maximizes the log likelihood 
-
-$\mathbb{E}_{x \sim p_{data}}\log p_\theta(x)$
-
- of a VAE, with 
- 
- $p_\theta(x) = \int_z p_\theta(x \mid z) p(z) dz$
- 
- . However, the density $p(z)$ is intractable, so VAE's use a network to approximate the true posterior used to minimize ELBO losses.
+For example, in a VAE, we have an "encoder" which learns a latent space representation of the data distribution, and then runs a new sample drawn from the latent space through a "decoder" to generate an image from the data distribution. The generator of a VAE maximizes the log likelihood $\mathbb{E}_{x \sim p_{data}}\log p_\theta(x)$ of a VAE, with $p_\theta(x) = \int_z p_\theta(x \mid z) p(z) dz$. However, the density $p(z)$ is intractable, so VAE's use a network to approximate the true posterior used to minimize ELBO losses.
 
 That's where normalizing flows come in. Normalizing flows similarly learn to map a data distribution to a known distribution through a series of transformations, but they don't suffer from the non-exact posteriors of VAEs. The key idea here is invertibility: Invertibility allows us to easily compute the inverse of the transformations to generate images from samples in the latent space, without having to approximate the posterior distribution of latent variables by training a new network. Why is this useful? It avoids the looseness of ELBOs, is more stable and often converges faster, and can sample in a single pass through $f_\theta$ on a Gaussian, without the need for reweighting and iterative solvers.
 
@@ -59,7 +51,7 @@ A single function $f$ is not expressive enough for the transformation of a simpl
 $$\det |\frac{\partial f^{-1}}{\partial z'}| = \prod_{i = 1}^N \det |\frac{\partial f^{-1}_i}{\partial z_i}|,$$
 where we denote $z_i = f_i \circ \cdots \circ f_1(z_0)$, where $z_0$ is from our initial distribution.
 
-This determinant relationship makes the log-likelihood easy to calculate. We have $$\ln q_i(z_i) = \ln q_0(z_0) - \sum_{k = 1}^i \ln |\det \frac{\partial f_k} {\partial z_{k-1}}|.$$
+This determinant relationship makes the log-likelihood easy to calculate. We have $$\ln q_i(z_i) = \ln q_0(z_0) - \sum_{k = 1}^i \ln \mid \det \frac{\partial f_k} {\partial z_{k-1}} \mid.$$
 
 Note that this is the generative flow from $z_0$ in some simple distribution to $z_k$ in some complex distribution.
 
@@ -129,7 +121,7 @@ $$y^{(k)} + \frac{(y^{(k+1)} - y^{(k)}) \left[ s^{(k)} \xi^2 + \delta^{(k)} \xi 
 
 Using the quotient rule, we get an expression for the derivative as follows:
 
-<div style="text-align: center; width: 80%; margin: 0 auto;">
+<div style="text-align: center; width: 65%; margin: 0 auto;">
   <img src="images/deriative_image.png" alt="Derivative formula">
 </div>
 
@@ -185,7 +177,7 @@ The model works as follows:
    \log p_\theta(x) &= \log p(z) + \sum_{k = 1}^T \log |\det \frac{\partial f_\theta ^{(k)} (z_{k-1})}{\partial z_{k-1}}|.
    \end{align*}$$
 
-   The first term, we call the Gaussian prior term, which is, up to constants, $-\frac{1}{2} ||z||^2$, for a standard normal prior latent distribution. 
+   The first term, we call the Gaussian prior term, which is, up to constants, $-\frac{1}{2} \lVert z \rVert^2$, for a standard normal prior latent distribution. 
 
    The second term is the log determinant of the Jacobian of our spline transformation, which we can compute analytically since each autoregressive block is lower-triangular. 
 
@@ -296,4 +288,6 @@ We were heavily limited by compute, with very little access to GPUs. Thus, we we
 [1]: Conor Durkan, Artur Bekasov, Iain Murray, and George Papamakarios. *Neural Spline Flows*. Advances in Neural Information Processing Systems, 2019. [arXiv:1906.04032](https://arxiv.org/abs/1906.04032)
 
 [2]: Shuangfei Zhai, Ruixiang Zhang, Preetum Nakkiran, et al. *Normalizing Flows are Capable Generative Models*. arXiv preprint, 2024. [arXiv:2412.06329](https://arxiv.org/abs/2412.06329)
+
+[3]: Danilo Jimenez Rezende and Shakir Mohamed. *Variational Inference with Normalizing Flows*. arXiv preprint, 2015. [arXiv:1505.05770](https://arxiv.org/abs/1505.05770)
 
