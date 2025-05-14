@@ -3,6 +3,17 @@ layout: page
 title: "Neural Spline Flows in Transformer Autoregressive Models"
 ---
 
+<!-- MathJax setup -->
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
 # Neural Spline Flows in Transformer Autoregressive Models
 
 By: Kristine Lu, Kshitij Sodani
