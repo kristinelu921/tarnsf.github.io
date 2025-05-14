@@ -32,7 +32,7 @@ Normalizing flows are a technique used in deep generative models that learn **in
 
 Many generative models in the context of image generation learn to map a data distribution to a simpler latent space representation, and then use samples drawn from the latent space along with a learnt mapping to bring images from the latent space back to the data distribution. 
 
-For example, in a VAE, we have an "encoder" which learns a latent space representation of the data distribution, and then runs a new sample drawn from the latent space through a "decoder" to generate an image from the data distribution. The generator of a VAE maximizes the log likelihood $\mathbb{E}_{x \sim p_{data}}[\log p_\theta(x)]$ of a VAE, with $p_\theta(x) = \int_z p_\theta(x|z) p(z) dz$. However, the density $p(z)$ is intractable, so VAE's use a network to approximate the true posterior used to minimize ELBO losses.
+For example, in a VAE, we have an "encoder" which learns a latent space representation of the data distribution, and then runs a new sample drawn from the latent space through a "decoder" to generate an image from the data distribution. The generator of a VAE maximizes the log likelihood $\mathbb{E}\_{x \sim p\_{data}}[\log p\_\theta(x)]$ of a VAE, with $p\_\theta(x) = \int\_z p\_\theta(x|z) p(z) dz$. However, the density $p(z)$ is intractable, so VAE's use a network to approximate the true posterior used to minimize ELBO losses.
 
 That's where normalizing flows come in. Normalizing flows similarly learn to map a data distribution to a known distribution through a series of transformations, but they don't suffer from the non-exact posteriors of VAEs. The key idea here is invertibility: Invertibility allows us to easily compute the inverse of the transformations to generate images from samples in the latent space, without having to approximate the posterior distribution of latent variables by training a new network. Why is this useful? It avoids the looseness of ELBOs, is more stable and often converges faster, and can sample in a single pass through $f_\theta$ on a Gaussian, without the need for reweighting and iterative solvers.
 
@@ -66,12 +66,15 @@ Now, how do we parameterize the functions $f_i$ to be as expressive as possible,
 There are two main methods of maintaining invertibility for normalizing flow functions in existing literature:
 
 1. **Coupling Inputs**: In one flow step, we move from vector $(x)$ to $(y)$. We first split the input vector $(x) \rightarrow (x_1, x_2)$ into two halves, and we generate $\theta$ from $(x_1)$ only through a neural network. We then apply a chosen flow function $f_\theta$ to $(x_2)$ to get $(y_2)$. Then, the jacobian of this transformation is 
+
 $
 \begin{bmatrix}
 I & * \\
 0 & \frac{\partial f_\theta}{\partial x_2}
 \end{bmatrix}
-$, where $\frac{\partial f_\theta}{\partial x_2}$ is diagonal because each coordinate in $(x_2)$ is transformed independently of all other coordinates. Thus, this Jacobian is perfectly invertible. In order to change the second half of the vector, we can take a permutation of the coordinates as a second function, which is also invertible.
+$
+
+, where $\frac{\partial f_\theta}{\partial x_2}$ is diagonal because each coordinate in $(x_2)$ is transformed independently of all other coordinates. Thus, this Jacobian is perfectly invertible. In order to change the second half of the vector, we can take a permutation of the coordinates as a second function, which is also invertible.
 
 2. **Autoregressive Mask**: Another way to maintain invertibility is to use an autoregressive mask, where we enforce that each new generated token only depends on previous tokens, so the Jacobian is lower triangular and thus invertible (we bound diagonal elements to be nonzero). A common form of this is described concretely. Let our data be a sequence of tokens $x_1, \cdots, x_n$. Let us take this sequence through some function $f$ to get a new sequence $y_1, \cdots, y_n$. Let the function $f$ have $y_i = f(x_i; x<i)$, where $x<i$ is the sequence of tokens $x_1, \cdots, x_{i-1}$, and the dimension $y_i$ is only dependent on all previous coordinates. Then, the matrix used to represent this transformation is lower triangular, and thus invertible as long as we enforce the diagonal elements to be nonzero.
 
@@ -126,14 +129,9 @@ Using the quotient rule, we get an expression for the derivative as follows:
 
 #### Claim: This composition of rational quadratics is invertible, monotone and continuous.
 
-It is easy to see that the derivative is always more than zero because of the squared expressions and the fact that $\xi$ is between $0$ and $1$, atleast one of $\xi$ and $1-\xi$ is positive and $s_k$ and $\sigma_k$ are all non-negative. Hence the function is monotone and hence invertible. Substituting $\xi = 0$ and $\xi = 1$, we also get the derivatives at the boundaries. are $\sigma_k$ and $\sigma_{k+1}$ as required.
+**Proof**: It is easy to see that the derivative is always more than zero because of the squared expressions and the fact that $\xi$ is between $0$ and $1$, atleast one of $\xi$ and $1-\xi$ is positive and $s_k$ and $\sigma_k$ are all non-negative. Hence the function is monotone and hence invertible. Substituting $\xi = 0$ and $\xi = 1$, we also get the derivatives at the boundaries. are $\sigma_k$ and $\sigma_{k+1}$ as required.
 
 Clearly the function is continuous as each rational quadratic is differentiable at each point in its range, the derivatives at common boundaries are same for any two neighboring rational quadratic expressions and the fact that the union of all the rational functions range is the function range $[-B,B]$.
-
-
-
-
-
 
 To evaluate the function for a fixed $x$, we can first do a binary search to find the largest $k$ such that boundary point $x_k \leq x$ and then evaluate the rational quadratic function of the $(k+1)$th bin on $x$.
 
@@ -232,8 +230,16 @@ We base the performance of our model compared to the affine transformation on th
 
 We calculated the logdet loss, total loss, and Gaussian prior loss over 100 epochs for a 8-bin RQS model, a 4-bin RQS model, and an affine transformation model, each with 8 flow blocks.
 
+<div style="text-align: center; width: 75%; margin: 0 auto;">
+  <img src="images/losses.png" alt="Comparison of losses between Affine and RQS models">
+  <p><em>Affine vs. RQS normalized losses</em></p>
+</div>
+
+Our results showed that the affine functions were able to learn more due to a higher logdet loss, while the RQS model was able to learn a more compressed Gaussian distribution. This doesn't directlty translsate to the affine transformation being more expressive than the RQS model, because the logdet loss is not the only metric we care about. We also care about the quality of the generated images.
 
 2. The FID score, which is a measure of the distance between two distributions, in this case, the distribution of the image patches and the distribution of the Gaussian latent space.
+
+
 
 Some of our generated digits looked as follows:
 
@@ -266,9 +272,6 @@ Furthermore, because rational quadratic spline transforms are nonlinear, we are 
 
 We also performed analysis on the number of bins needed. Essentially, the larger the number of bins, the more robust our model is to variance in pixels at all patches. Choosing K as a small constant like 4 or 8 is good enough to give good results. We obviously cannot choose K very high (like 100) as that would lead to a huge constant factor.  Increasing the number of bins a little bit might be useful in more complex datasets like Imagenet. We haven't tested yet on more complex datasets due to compute bottlenecks.
 
-#### compare learning rate curves and final gaussians of affine vs spline
-
-#### compare logdets + generations + classifications + fid???
 
 
 ## Discussion/Conclusion
@@ -298,3 +301,6 @@ We were heavily limited by compute, with very little access to GPUs. Thus, we we
 [1] https://arxiv.org/pdf/2412.06329
 
 [2] https://arxiv.org/pdf/1906.04032
+
+[3] https://arxiv.org/abs/1908.09257
+
