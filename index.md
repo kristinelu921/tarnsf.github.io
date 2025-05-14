@@ -121,7 +121,7 @@ $$y^{(k)} + \frac{(y^{(k+1)} - y^{(k)}) \left[ s^{(k)} \xi^2 + \delta^{(k)} \xi 
 
 Using the quotient rule, we get an expression for the derivative as follows:
 
-<div style="text-align: center; width: 50%; margin: 0 auto;">
+<div style="text-align: center; width: 80%; margin: 0 auto;">
   <img src="images/deriative_image.png" alt="Derivative formula">
 </div>
 
@@ -150,13 +150,10 @@ This reduces to solving a quadratic equation in $\xi$ if y is constant. There ar
 
 The monotonic rational-quadratic coupling transform is implemented in practice as follows:
 
-1. A neural network (NN) receives input $\mathbf{x}_{1:d-1}$ and produces an unconstrained parameter vector $\boldsymbol{\theta}_i$ of size $3K - 1$ for each $i = d, \ldots, D$.
-
-2. The vector $\boldsymbol{\theta}_i$ is divided into three parts: $\boldsymbol{\theta}_i = [\boldsymbol{\theta}_i^w, \boldsymbol{\theta}_i^h, \boldsymbol{\theta}_i^d]$, where $\boldsymbol{\theta}_i^w$ and $\boldsymbol{\theta}_i^h$ are vectors of length $K$, and $\boldsymbol{\theta}_i^d$ is of length $K - 1$.
-
-3. Both $\boldsymbol{\theta}_i^w$ and $\boldsymbol{\theta}_i^h$ are passed through a softmax layer and then scaled by $2B$. The resulting values are treated as the widths and heights of the $K$ bins. This ensures that the values are positive and the total range spans the interval $[-B, B]$. The bin widths and heights are accumulated (via cumulative sum) from $-B$ to yield the $K+1$ knot positions $\{(x^{(k)}, y^{(k)})\}_{k=0}^{K}$.
-
-4. The derivative parameters $\boldsymbol{\theta}_i^d$ are passed through a softplus activation, and the outputs are interpreted as the values of the derivatives $\{\delta^{(k)}\}_{k=1}^{K-1}$ at the internal knot points.
+<div style="text-align: center; width: 90%; margin: 0 auto;">
+  <img src="images/implementation.png" alt="Spline Block">
+  <p><em></em></p>
+</div>
 
 
 ## Method
@@ -278,7 +275,7 @@ We also performed analysis on the number of bins needed. Essentially, the larger
 
 #### Limitations:
 
-We were heavily limited by compute, with very little access to GPUs. Thus, we were only able to train on a few epochs, small models, and on a small dataset MNIST. Because of this, we were also not able to run as many experiments and tested as many ablations and hyperparameters as we would have liked. However, there are other experiments we would have liked to run, which we discuss here.
+We were heavily limited by compute, with very little access to GPUs. Thus, we were only able to train on a few epochs, few selection of hyperparameters small models, and only on a small dataset MNIST. Because of this, we were also not able to run as many experiments and tested as many ablations and hyperparameters as we would have liked. However, there are other experiments we would have liked to run, which we discuss here.
 
 #### Future Works:
 
@@ -289,16 +286,13 @@ We were heavily limited by compute, with very little access to GPUs. Thus, we we
 
 - **Testing New Functions**: Taking inspiration from quadratic splines, we would like to text other complex invertible monotonic functions, and see if they can be both expressive and efficient, instead of sticking to simple affine transformations as the status quo.
 
-- **Parameter Testing and Scaling Laws**: We would like to benchmark how the number of flow steps, layers, blocks, and bins can affect the performance of our model, and how it compares to the scaling laws of other complex transformations.
+- **Parameter Testing and Scaling Laws**: We would like to benchmark how the number of flow steps, layers, blocks, and bins can affect the performance of our model. We would like to find scaling laws, especially for the number of block layers.
 
 - **Interpretibility**: Having the exact marginal posterior distribution of latent variables combined with expressive generations opens the door to interpretibility, seeing where in latent spaces features lie. This would be an interesting direction to explore.
 
 
 ## References
 
-[1] https://arxiv.org/pdf/2412.06329
+[1]: Conor Durkan, Artur Bekasov, Iain Murray, and George Papamakarios. *Neural Spline Flows*. Advances in Neural Information Processing Systems, 2019. [arXiv:1906.04032](https://arxiv.org/abs/1906.04032)
 
-[2] https://arxiv.org/pdf/1906.04032
-
-[3] https://arxiv.org/abs/1908.09257
-
+[2]: Shuangfei Zhai, Ruixiang Zhang, Preetum Nakkiran, et al. *Normalizing Flows are Capable Generative Models*. arXiv preprint, 2024. [arXiv:2412.06329](https://arxiv.org/abs/2412.06329)
