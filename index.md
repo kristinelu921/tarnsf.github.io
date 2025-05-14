@@ -17,6 +17,7 @@ title: "Neural Spline Flows in Transformer Autoregressive Models"
 # Neural Spline Flows in Transformer Autoregressive Models
 
 By: Kristine Lu, Kshitij Sodani
+Github code: https://github.com/kristinelu921/tarnsf.github.io
 
 ## Introduction
 Normalizing flows are a technique used in deep generative models that learn **invertible** mappings between a data distribution and a known reference distribution (typically a Gaussian). Recent state of the art image generative models center around diffusion, and research in the direction of normalizing flows has been left behind. However, when built on new architecture utilizing masked autoregressive vision transformer models, normalizing flows have shown to indeed be powerful image generative models [1]. One of the important choices when designing a normalizing flow is the choice of flow function. Our project tests the effectiveness of replacing the simple affine transformation of recent normalizing flow models with monotonic rational-quadratic spline transforms, essentially combining the flexibility of neural spline flows with the recent autoregressive masked ViT architecture to improve the ability of the model to capture complex transformations with fewer flow blocks.
@@ -32,7 +33,7 @@ Normalizing flows are a technique used in deep generative models that learn **in
 
 Many generative models in the context of image generation learn to map a data distribution to a simpler latent space representation, and then use samples drawn from the latent space along with a learnt mapping to bring images from the latent space back to the data distribution. 
 
-For example, in a VAE, we have an "encoder" which learns a latent space representation of the data distribution, and then runs a new sample drawn from the latent space through a "decoder" to generate an image from the data distribution. The generator of a VAE maximizes the log likelihood $\mathbb{E}_{x \sim p_{data}}\log p_\theta(x)$ of a VAE, with $p_\theta(x) = \int_z p_\theta(x \mid z) p(z) dz$. However, the density $p(z)$ is intractable, so VAE's use a network to approximate the true posterior used to minimize ELBO losses.
+For example, in a VAE, we have an "encoder" which learns a latent space representation of the data distribution, and then runs a new sample drawn from the latent space through a "decoder" to generate an image from the data distribution. The generator of a VAE maximizes the log likelihood $ \mathbb{E}_{x \sim p_{data}}\log p_\theta(x) $ of a VAE, with $ p_\theta(x) = \int_z p_\theta(x \mid z) p(z) dz $. However, the density $p(z)$ is intractable, so VAE's use a network to approximate the true posterior used to minimize ELBO losses.
 
 That's where normalizing flows come in. Normalizing flows similarly learn to map a data distribution to a known distribution through a series of transformations, but they don't suffer from the non-exact posteriors of VAEs. The key idea here is invertibility: Invertibility allows us to easily compute the inverse of the transformations to generate images from samples in the latent space, without having to approximate the posterior distribution of latent variables by training a new network. Why is this useful? It avoids the looseness of ELBOs, is more stable and often converges faster, and can sample in a single pass through $f_\theta$ on a Gaussian, without the need for reweighting and iterative solvers.
 
@@ -133,7 +134,7 @@ Using the quotient rule, we get an expression for the derivative as follows:
 
 Clearly the function is continuous as each rational quadratic is differentiable at each point in its range, the derivatives at common boundaries are same for any two neighboring rational quadratic expressions and the fact that the union of all the rational functions range is the function range $[-B,B]$.
 
-To evaluate the function for a fixed $x$, we can first do a binary search to find the largest $k$ such that boundary point $x_k \leq x$ and then evaluate the rational quadratic function of the $(k+1)$th bin on $x$.
+To evaluate the function for a fixed $x$, we can first do a binary search to find the largest $k$ such that boundary point $x_k \leq x$ and then evaluate the rational quadratic function of the $k+1$ th bin on $x$.
 
 It turns out the co-domain of this construction is also $[-B,B]$ so we don't need to re-normalize anything.
 
@@ -290,4 +291,6 @@ We were heavily limited by compute, with very little access to GPUs. Thus, we we
 [2]: Shuangfei Zhai, Ruixiang Zhang, Preetum Nakkiran, et al. *Normalizing Flows are Capable Generative Models*. arXiv preprint, 2024. [arXiv:2412.06329](https://arxiv.org/abs/2412.06329)
 
 [3]: Danilo Jimenez Rezende and Shakir Mohamed. *Variational Inference with Normalizing Flows*. arXiv preprint, 2015. [arXiv:1505.05770](https://arxiv.org/abs/1505.05770)
+
+[4]: Delbourgo, R., & Gregory, J. A. (1982). Rational quadratic spline interpolation to monotonic data. Maths Technical Papers (Brunel University), July 1982, 1–18. Retrieved from http://bura.brunel.ac.uk/handle/2438/2285 
 
