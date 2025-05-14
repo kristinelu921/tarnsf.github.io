@@ -228,11 +228,11 @@ We base the performance of our model compared to the affine transformation on th
 We calculated the logdet loss, total loss, and Gaussian prior loss over 100 epochs for a 8-bin RQS model, a 4-bin RQS model, and an affine transformation model, each with 8 flow blocks.
 
 <div style="text-align: center; width: 75%; margin: 0 auto;">
-  <img src="images/losses.png" alt="Comparison of losses between Affine and RQS models">
+  <img src="images/Losses.png" alt="Comparison of losses between Affine and RQS models">
   <p><em>Affine vs. RQS normalized losses</em></p>
 </div>
 
-Our results showed that the affine functions were able to learn more due to a higher logdet loss, while the RQS model was able to learn a more compressed Gaussian distribution. This doesn't directlty translsate to the affine transformation being more expressive than the RQS model, because the logdet loss is not the only metric we care about. We also care about the quality of the generated images.
+Our results showed that the affine functions were able to learn more due to a higher logdet loss, while the RQS model was able to learn a more compressed Gaussian distribution. This doesn't directly translate to the affine transformation being more expressive than the RQS model, because the logdet loss is not the only metric we care about. We also care about the quality of the generated images.
 
 <div style="text-align: center; width: 75%; margin: 0 auto;">
   <img src="images/digits.png" alt="Generated MNIST digits">
@@ -272,7 +272,7 @@ We were heavily limited by compute, with very little access to GPUs. Thus, we we
 #### Future Works:
 
 
-- **Scale to Larger Datasets**: We would like to test on larger datasets like CIFAR-10, CelebA, and subsets of ImageNet. Theoretically, our model should excel on datasets with large variance in pixel values, like ImageNet, versus MNIST, because of its piecewise nature. 
+- **Scale to Larger Datasets**: We would like to test on larger datasets like CIFAR-10, CelebA, and subsets of ImageNet. Theoretically, our model should excel on datasets with large variance in pixel values, like ImageNet, versus MNIST, because of its piecewise nature. Given more time, we would like to test on more accurate measures such as FID score.
 
 - **Permutations**: We would like to test different permutations of the patch order, and see if they yield better results. We ran into the issue above of the first and last few patches being particularly noisy, so we would like to see if different sequence permutations (instead of flipping the order each block) yield better results.
 
