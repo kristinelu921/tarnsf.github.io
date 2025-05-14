@@ -158,6 +158,7 @@ The monotonic rational-quadratic coupling transform is implemented in practice a
 
 3. Both $\boldsymbol{\theta}_i^w$ and $\boldsymbol{\theta}_i^h$ are passed through a softmax layer and then scaled by $2B$. The resulting values are treated as the widths and heights of the $K$ bins. This ensures that the values are positive and the total range spans the interval $[-B, B]$. The bin widths and heights are accumulated (via cumulative sum) from $-B$ to yield the $K+1$ knot positions $\{(x^{(k)}, y^{(k)})\}_{k=0}^{K}$.
 
+
 4. The derivative parameters $\boldsymbol{\theta}_i^d$ are passed through a softplus activation, and the outputs are interpreted as the values of the derivatives $\{\delta^{(k)}\}_{k=1}^{K-1}$ at the internal knot points.
 
 
