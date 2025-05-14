@@ -17,6 +17,7 @@ title: "Neural Spline Flows in Transformer Autoregressive Models"
 # Neural Spline Flows in Transformer Autoregressive Models
 
 By: Kristine Lu, Kshitij Sodani
+
 Github code: https://github.com/kristinelu921/tarnsf.github.io
 
 ## Introduction
@@ -33,7 +34,7 @@ Normalizing flows are a technique used in deep generative models that learn **in
 
 Many generative models in the context of image generation learn to map a data distribution to a simpler latent space representation, and then use samples drawn from the latent space along with a learnt mapping to bring images from the latent space back to the data distribution. 
 
-For example, in a VAE, we have an "encoder" which learns a latent space representation of the data distribution, and then runs a new sample drawn from the latent space through a "decoder" to generate an image from the data distribution. The generator of a VAE maximizes the log likelihood $ \mathbb{E}_{x \sim p_{data}}\log p_\theta(x) $ of a VAE, with $ p_\theta(x) = \int_z p_\theta(x \mid z) p(z) dz $. However, the density $p(z)$ is intractable, so VAE's use a network to approximate the true posterior used to minimize ELBO losses.
+For example, in a VAE, we have an "encoder" which learns a latent space representation of the data distribution, and then runs a new sample drawn from the latent space through a "decoder" to generate an image from the data distribution. The generator of a VAE maximizes the log likelihood $$ \mathbb{E}_{x \sim p_{data}}\log p_\theta(x), $$with $$ p_\theta(x) = \int_z p_\theta(x \mid z) p(z) dz.$$ However, the density $p(z)$ is intractable, so VAE's use a network to approximate the true posterior used to minimize ELBO losses.
 
 That's where normalizing flows come in. Normalizing flows similarly learn to map a data distribution to a known distribution through a series of transformations, but they don't suffer from the non-exact posteriors of VAEs. The key idea here is invertibility: Invertibility allows us to easily compute the inverse of the transformations to generate images from samples in the latent space, without having to approximate the posterior distribution of latent variables by training a new network. Why is this useful? It avoids the looseness of ELBOs, is more stable and often converges faster, and can sample in a single pass through $f_\theta$ on a Gaussian, without the need for reweighting and iterative solvers.
 
@@ -67,15 +68,13 @@ Now, how do we parameterize the functions $f_i$ to be as expressive as possible,
 There are two main methods of maintaining invertibility for normalizing flow functions in existing literature:
 
 1. **Coupling Inputs**: In one flow step, we move from vector $(x)$ to $(y)$. We first split the input vector $(x) \rightarrow (x_1, x_2)$ into two halves, and we generate $\theta$ from $(x_1)$ only through a neural network. We then apply a chosen flow function $f_\theta$ to $(x_2)$ to get $(y_2)$. Then, the jacobian of this transformation is 
-
-$
+$$
 \begin{bmatrix}
 I & * \\
 0 & \frac{\partial f_\theta}{\partial x_2}
-\end{bmatrix}
-$
-
-, where $\frac{\partial f_\theta}{\partial x_2}$ is diagonal because each coordinate in $(x_2)$ is transformed independently of all other coordinates. Thus, this Jacobian is perfectly invertible. In order to change the second half of the vector, we can take a permutation of the coordinates as a second function, which is also invertible.
+\end{bmatrix},
+$$
+where $\frac{\partial f_\theta}{\partial x_2}$ is diagonal because each coordinate in $(x_2)$ is transformed independently of all other coordinates. Thus, this Jacobian is perfectly invertible. In order to change the second half of the vector, we can take a permutation of the coordinates as a second function, which is also invertible.
 
 2. **Autoregressive Mask**: Another way to maintain invertibility is to use an autoregressive mask, where we enforce that each new generated token only depends on previous tokens, so the Jacobian is lower triangular and thus invertible (we bound diagonal elements to be nonzero). A common form of this is described concretely. Let our data be a sequence of tokens $x_1, \cdots, x_n$. Let us take this sequence through some function $f$ to get a new sequence $y_1, \cdots, y_n$. Let the function $f$ have $y_i = f(x_i; x<i)$, where $x<i$ is the sequence of tokens $x_1, \cdots, x_{i-1}$, and the dimension $y_i$ is only dependent on all previous coordinates. Then, the matrix used to represent this transformation is lower triangular, and thus invertible as long as we enforce the diagonal elements to be nonzero.
 
