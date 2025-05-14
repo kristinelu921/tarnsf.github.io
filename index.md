@@ -239,8 +239,6 @@ Our results showed that the affine functions were able to learn more due to a hi
 
 2. The FID score, which is a measure of the distance between two distributions, in this case, the distribution of the image patches and the distribution of the Gaussian latent space.
 
-
-
 Some of our generated digits looked as follows:
 
 <div style="text-align: center; width: 75%; margin: 0 auto;">
