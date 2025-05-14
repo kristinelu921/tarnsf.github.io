@@ -118,7 +118,7 @@ $$y^{(k)} + \frac{(y^{(k+1)} - y^{(k)}) \left[ s^{(k)} \xi^2 + \delta^{(k)} \xi 
 
 Using the quotient rule, we get an expression for the derivative as follows:
 
-<div style="text-align: center; width: 50%; margin: 0 auto;">
+<div style="text-align: center; width: 80%; margin: 0 auto;">
   <img src="images/deriative_image.png" alt="Derivative formula">
 </div>
 
@@ -152,14 +152,10 @@ This reduces to solving a quadratic equation in $\xi$ if y is constant. There ar
 
 The monotonic rational-quadratic coupling transform is implemented in practice as follows:
 
-1. A neural network (NN) receives input $\mathbf{x}_{1:d-1}$ and produces an unconstrained parameter vector $\boldsymbol{\theta}_i$ of size $3K - 1$ for each $i = d, \ldots, D$.
-
-2. The vector $\boldsymbol{\theta}_i$ is divided into three parts: $\boldsymbol{\theta}_i = [\boldsymbol{\theta}_i^w, \boldsymbol{\theta}_i^h, \boldsymbol{\theta}_i^d]$, where $\boldsymbol{\theta}_i^w$ and $\boldsymbol{\theta}_i^h$ are vectors of length $K$, and $\boldsymbol{\theta}_i^d$ is of length $K - 1$.
-
-3. Both $\boldsymbol{\theta}_i^w$ and $\boldsymbol{\theta}_i^h$ are passed through a softmax layer and then scaled by $2B$. The resulting values are treated as the widths and heights of the $K$ bins. This ensures that the values are positive and the total range spans the interval $[-B, B]$. The bin widths and heights are accumulated (via cumulative sum) from $-B$ to yield the $K+1$ knot positions $\{(x^{(k)}, y^{(k)})\}_{k=0}^{K}$.
-
-
-4. The derivative parameters $\boldsymbol{\theta}_i^d$ are passed through a softplus activation, and the outputs are interpreted as the values of the derivatives $\{\delta^{(k)}\}_{k=1}^{K-1}$ at the internal knot points.
+<div style="text-align: center; width: 90%; margin: 0 auto;">
+  <img src="images/implementation.png" alt="Spline Block">
+  <p><em></em></p>
+</div>
 
 
 ## Method
