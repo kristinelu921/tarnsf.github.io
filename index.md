@@ -126,7 +126,7 @@ Using the quotient rule, we get an expression for the derivative as follows:
 
 #### Claim: This composition of rational quadratics is invertible, monotone and continuous.
 
-It is easy to see that the derivative is always more than zero because of the squared expressions and the fact that $\xi$ is between $0$ and $1$, atleast one of $\xi$ and $1-\xi$ is positive and $s_k$ and $\sigma_k$ are all non-negative. Hence the function is monotone and hence invertible. Substituting $\xi = 0$ and $\xi = 1$, we also get the derivatives at the boundaries. are $\sigma_k$ and $\sigma_{k+1}$ as required.
+**Proof**: It is easy to see that the derivative is always more than zero because of the squared expressions and the fact that $\xi$ is between $0$ and $1$, atleast one of $\xi$ and $1-\xi$ is positive and $s_k$ and $\sigma_k$ are all non-negative. Hence the function is monotone and hence invertible. Substituting $\xi = 0$ and $\xi = 1$, we also get the derivatives at the boundaries. are $\sigma_k$ and $\sigma_{k+1}$ as required.
 
 Clearly the function is continuous as each rational quadratic is differentiable at each point in its range, the derivatives at common boundaries are same for any two neighboring rational quadratic expressions and the fact that the union of all the rational functions range is the function range $[-B,B]$.
 
