@@ -274,7 +274,7 @@ We also performed analysis on the number of bins needed. Essentially, the larger
 
 #### Limitations:
 
-We were heavily limited by compute, with very little access to GPUs. Thus, we were only able to train on a few epochs, small models, and on a small dataset MNIST. Because of this, we were also not able to run as many experiments and tested as many ablations and hyperparameters as we would have liked. However, there are other experiments we would have liked to run, which we discuss here.
+We were heavily limited by compute, with very little access to GPUs. Thus, we were only able to train on a few epochs, few selection of hyperparameters small models, and only on a small dataset MNIST. Because of this, we were also not able to run as many experiments and tested as many ablations and hyperparameters as we would have liked. However, there are other experiments we would have liked to run, which we discuss here.
 
 #### Future Works:
 
@@ -285,7 +285,7 @@ We were heavily limited by compute, with very little access to GPUs. Thus, we we
 
 - **Testing New Functions**: Taking inspiration from quadratic splines, we would like to text other complex invertible monotonic functions, and see if they can be both expressive and efficient, instead of sticking to simple affine transformations as the status quo.
 
-- **Parameter Testing and Scaling Laws**: We would like to benchmark how the number of flow steps, layers, blocks, and bins can affect the performance of our model, and how it compares to the scaling laws of other complex transformations.
+- **Parameter Testing and Scaling Laws**: We would like to benchmark how the number of flow steps, layers, blocks, and bins can affect the performance of our model. We would like to find scaling laws, especially for the number of block layers.
 
 - **Interpretibility**: Having the exact marginal posterior distribution of latent variables combined with expressive generations opens the door to interpretibility, seeing where in latent spaces features lie. This would be an interesting direction to explore.
 
