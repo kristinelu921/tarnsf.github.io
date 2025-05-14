@@ -284,13 +284,12 @@ We were heavily limited by compute, with very little access to GPUs. Thus, we we
 
 
 ## References
+1: Conor Durkan, Artur Bekasov, Iain Murray, and George Papamakarios. *Neural Spline Flows*. Advances in Neural Information Processing Systems, 2019. [arXiv:1906.04032](https://arxiv.org/abs/1906.04032)
 
-[1]: Conor Durkan, Artur Bekasov, Iain Murray, and George Papamakarios. *Neural Spline Flows*. Advances in Neural Information Processing Systems, 2019. [arXiv:1906.04032](https://arxiv.org/abs/1906.04032)
+2: Shuangfei Zhai, Ruixiang Zhang, Preetum Nakkiran, et al. *Normalizing Flows are Capable Generative Models*. arXiv preprint, 2024. [arXiv:2412.06329](https://arxiv.org/abs/2412.06329)
 
-[2]: Shuangfei Zhai, Ruixiang Zhang, Preetum Nakkiran, et al. *Normalizing Flows are Capable Generative Models*. arXiv preprint, 2024. [arXiv:2412.06329](https://arxiv.org/abs/2412.06329)
+3: Danilo Jimenez Rezende and Shakir Mohamed. *Variational Inference with Normalizing Flows*. arXiv preprint, 2015. [arXiv:1505.05770](https://arxiv.org/abs/1505.05770)
 
-[3]: Danilo Jimenez Rezende and Shakir Mohamed. *Variational Inference with Normalizing Flows*. arXiv preprint, 2015. [arXiv:1505.05770](https://arxiv.org/abs/1505.05770)
+4: Delbourgo, R., & Gregory, J. A. (1982). Rational quadratic spline interpolation to monotonic data. Maths Technical Papers (Brunel University), July 1982, 1–18. Retrieved from http://bura.brunel.ac.uk/handle/2438/2285 
 
-[4]: Delbourgo, R., & Gregory, J. A. (1982). Rational quadratic spline interpolation to monotonic data. Maths Technical Papers (Brunel University), July 1982, 1–18. Retrieved from http://bura.brunel.ac.uk/handle/2438/2285 
-
-[5]: Kobyzev, I., Prince, S. J. D., & Brubaker, M. A. (2020). Normalizing Flows: An introduction and review of current methods. IEEE Transactions on Pattern Analysis and Machine Intelligence, 1–16. https://doi.org/10.1109/TPAMI.2020.2992934
+5: Kobyzev, I., Prince, S. J. D., & Brubaker, M. A. (2020). Normalizing Flows: An introduction and review of current methods. IEEE Transactions on Pattern Analysis and Machine Intelligence, 1–16. https://doi.org/10.1109/TPAMI.2020.2992934
